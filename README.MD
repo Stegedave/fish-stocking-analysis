@@ -45,25 +45,6 @@ This project analyzes historical fish stocking data from the Michigan Department
 
 ---
 
-## Example Visualizations
-
-- Line graph: Total fish stocked by year
-- Bar chart: Top 10 most frequently stocked water bodies
-- Heatmap: Species stocking density across years
-- Pie chart: Species distribution by count
-
----
-
-## To Do
-
-- [ ] Clean and normalize the raw dataset
-- [ ] Aggregate by year/species/waterbody
-- [ ] Calculate change rates per location
-- [ ] Create dashboards and charts
-- [ ] Interpret findings and write conclusions
-
----
-
 ## Insights Coming Soon
 
 Once analysis is complete, I’ll summarize key findings such as:
