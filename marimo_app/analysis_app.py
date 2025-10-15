@@ -9,20 +9,48 @@ def _():
     import marimo as mo
     import pandas as pd
     import matplotlib.pyplot as plt
-
-    mo.md("#🐟Fish Stocking Data Cleaning🎣.")
     return mo, pd, plt
 
 
 @app.cell
 def _(mo):
-    mo.md("""##Looking at stocking reports provided by the Michigan Department of Natural Resources to see how efforts have changed overtime.""")
+    mo.md(
+        """
+    #🐟Fish Stocking Data Analysis🎣.
+    ## Looking at stocking reports provided by the Michigan Department of Natural Resources to see how efforts have changed overtime.
+    """
+    )
     return
 
 
 @app.cell
 def _(mo):
-    mo.md(r"""## Loading the dataset and checking first 5 rows of the data.""")
+    mo.md(
+        r"""
+    # **The questions we are going to answer with this analysis are:** 
+    1. ### what is the top 10 and bottom 10 fish species stocked from 2000 to 2025?
+    1. ### How has fish stocking changed over the years?
+    1. ### What is the average amount of fish stocked yearly, Semi decadely, and decadely?
+    1. ### What fish species has seen an increase in stocking efforts and which have seen a decline?
+      - ### Has salmon, trout, and steelhead stocking efforts decreased or increased since 2000?
+    1. ### What are the yearly averages of each top 10 species stocked?
+    1. ### What time of year (month) does stocking usually take place? How many times a year? 
+    1. ### Which counties see the most effort in stocking? Which ones see significantly less efforts? 
+    1. ### What Counties see the highest stocking efforts and which ones see the lowest stocking efforts?
+    1. ### What water bodies have the lowest number of stocking efforts? What water bodies have the highest stocking efforts?
+    """
+    )
+    return
+
+
+@app.cell
+def _(mo):
+    mo.md(
+        r"""
+    # **📊 Start of our EDA 🔎 :**
+    ## Loading the dataset and checking **first 5 rows of the data**.
+    """
+    )
     return
 
 
@@ -36,7 +64,7 @@ def _(pd):
 
 @app.cell
 def _(mo):
-    mo.md(r"""## Summarizing the dataset and checking first 5 rows of the data for missing values compared to totals.""")
+    mo.md(r"""### **Summarizing the dataset and checking rows of the data for missing values compared to totals.**""")
     return
 
 
@@ -50,6 +78,12 @@ def _(df_raw, pd):
         "missing_%": round(df_raw.isnull().mean() *100, 2)
     })
     missing_summary.sort_values(by="missing_%", ascending=False)
+    return
+
+
+@app.cell
+def _(mo):
+    mo.md(r""" """)
     return
 
 
@@ -105,9 +139,10 @@ def _(mo):
 
     ## The following species were **stocked every year** from 2000 to 2025 (26 years), showing consistent management focus on walleye and cold water species like trout & salmon.
 
-    - Walleye leads by a huge margin with over **354** million fish stocked. 🐟🐟🐟
-    - Trout & Salmon dominate the list showing a priority and focus on **coldwater species**.🐟🐟
-    - Atlantic Salmon are stocked consistently but are by far **less stocked**.🐟
+    - Walleye leads by a huge margin with over **354** million fish stocked. 🐟🐟🐟🐟
+    - Trout & Salmon dominate the list showing a priority and focus on **coldwater species**.🐟🐟🐟
+    - Atlantic Salmon are stocked consistently but are by far **less stocked**.🐟🐟
+    - Flathead minnows are a focus providing solid bait fish for predetor fish. 🐟
 
     ###**This reflects long term investment in popular sport fish and strategic strategies across Michigan Waters.**
     """
@@ -152,7 +187,7 @@ def _(df_clean, pd):
 
     # top 10 stocked fish
     top_10_consistent
-    return bottom_10_consistent, top_10_consistent
+    return bottom_10_consistent, top_10_consistent, yearly_species
 
 
 @app.cell
@@ -176,7 +211,7 @@ def _(plt, top_10_consistent):
     plt.title("Top 10 Consistently Stocked Fish Species in Michigan (2000 - 2025)")
     plt.grid(axis='x', linestyle='--', alpha=0.6)
 
-    # adding data labels with 2 decimal places
+    # adding data labels with 2 decimal places at end of each bar
     for bar in bars:
         width = bar.get_width()
         plt.text(width + 1, bar.get_y() + bar.get_height() / 2,
@@ -187,20 +222,22 @@ def _(plt, top_10_consistent):
 
     # return figure so it shows in web dashboard
     fig
-    return ax, fig
+    return
 
 
 @app.cell
 def _(mo):
     mo.md(
         r"""
-    # Bottom 10 Consistently Stocked Fish Species (2000-2025) 🐟
+    # Bottom 10 Stocked Fish Species (2000-2025) 🐟
 
-    ##The following species were **stocked every year** from 2000 to 2025 (26 years).
-    - Species like flathead catfish & white sucker were stocked **only once**, with just a handful of fish. 🐟🐟🐟
-    - Some species were stocked for 3 years and in **very limited numbers**.🐟🐟
-    - Stocking efforts are heavily focused on sport and game fish.🐟
-    - Some native or less popular species have minimal stocking efforts or experimental at best.
+    ### This looks at the bottom 10 species of fish stocked by number of fish per species by year.
+
+    ##The following species were stocked between 2000 to 2025 (26 years). **Some have only been stocked once throughout the 26 years this dataset covers.**
+    - Species like flathead catfish & white sucker were stocked **only once**, with just a handful of fish. 🐟🐟🐟🐟
+    - Some species were stocked for 3 years and in **very limited numbers**.🐟🐟🐟
+    - Stocking efforts are heavily focused on sport and game fish.🐟🐟
+    - Some native or less popular species have minimal stocking efforts or experimental at best.🐟
 
     ###**This again reflects a long term investment in popular sport fish & game fish and strategic strategies across Michigan Waters.**
     """
@@ -216,23 +253,89 @@ def _(bottom_10_consistent):
 
 
 @app.cell
-def _(ax, bottom_10_consistent, fig, plt):
+def _(bottom_10_consistent, plt):
     # bottom 10 plot
     bottom_10_plot = bottom_10_consistent.copy()
-    if bottom_10_plot['Total Fish Stocked'].dtype== 'object':
-        bottom_10_plot['Total Fish Stocked'] = bottom_10_plot['Total Fish Stocked'].replace({',': ''}, regex=True).astype(int)
+    if bottom_10_plot['Total Fish Stocked'].dtype == 'object':
+        bottom_10_plot['Total Fish Stocked'] = (
+            bottom_10_plot['Total Fish Stocked']
+            .replace({',': ''}, regex=True)
+            .astype(int)
+        )
+    # sorting before plotting
+    bottom_10_plot = bottom_10_plot.sort_values(by='Total Fish Stocked', ascending=True).head(10)
 
     # creating plots
-    fig2, ax2 = plt.subplots(figsize=(10,6))
-    bars2 = ax2.barh(bottom_10_plot.index, bottom_10_plot['Stocked'], color='teal')
+    fig1, ax1 = plt.subplots(figsize=(10,6))
+    bars1 = ax1.barh(bottom_10_plot.index, bottom_10_plot['Total Fish Stocked'], color='mediumseagreen')
+
 
     # adding labels and title
-    ax.set_xlabel('Total Fish Stocked')
-    ax.set_title('Bottom 10 Fish Stocked Fish Species (2000-2025')
-    ax.ivert_yaxis # highest at the top
+    ax1.set_xlabel('Total Fish Stocked')
+    ax1.set_title('Bottom 10 Fish Stocked Fish Species (2000-2025')
+    ax1.invert_yaxis() # highest at the top
+
+    # adding data labels at end of each bar
+    for bar1 in bars1:
+        width1 = bar1.get_width()
+        ax1.text(
+            width1 + max(bottom_10_plot['Total Fish Stocked']) * 0.01,  # small offset
+            bar1.get_y() + bar1.get_height() / 2,
+            f"{int(width1):,}",  # convert to int and format with commas
+            va='center',
+            fontsize=9
+        )
+
+    # footnote
+    fig1.text(0.95, 0.01, "Figures shown in raw totals", fontsize=8, style='italic')
 
     #show plot
-    fig
+    fig1
+    return
+
+
+@app.cell
+def _(mo):
+    mo.md(r"""# **Looking at total fish stocked per year (2000 - 2025)**""")
+    return
+
+
+@app.cell
+def _(plt, yearly_species):
+    # grouping by year 
+    yearly_totals = (
+        yearly_species.groupby('Year')['Number'].sum().reset_index().sort_values('Year')
+    )
+
+    # plot the yearly trend
+    fig2, ax2 = plt.subplots(figsize=(10,6))
+    ax2.plot(yearly_totals['Year'], yearly_totals['Number'], marker='o', linestyle='-', color='mediumseagreen')
+
+    # format the chart
+    ax2.set_title('Total Fish Stocked Per Year in Michigan 2000 - 2025')
+    ax2.set_xlabel('Year')
+    ax2.set_ylabel('Total Fish Stocked')
+    ax2.grid(True, linestyle='--', alpha=0.5)
+    ax2.get_yaxis().set_major_formatter(plt.FuncFormatter(lambda x, _: f"{int(x):,}"))
+
+    # Show the figure
+    fig2
+    return
+
+
+@app.cell
+def _(mo):
+    mo.md(
+        r"""
+    - #### **There is a significant drop in stocking activity around 2007–2008, followed by another dip in 2020 — likely due to COVID-19 disruptions.**
+    - #### **Peak stocking years appear to be around 2005 and 2015, of which 2015 surpassed 40 million fish stocked.**
+    - #### **After 2015, there is a consistent decline through 2020, reaching a low point of under 15 million fish stocked.**
+    - ### **A strong recovery is seen around 2016–2017, with noticeable spikes in activity peaking around 2021 / 2022.**
+    - ### **:Post-2020 shows a brief recovery, but drops again in 2023–2024.**
+    - ### **2025 shows a small rebound, with totals nearing 20 million fish stocked.**
+    - # **📊 Overall, the data suggests a downward trend in fish stocking efforts from 2000 to 2025, despite occasional spikes in activity. 🪓**
+    """
+    )
     return
 
 
