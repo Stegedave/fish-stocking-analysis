@@ -23,7 +23,7 @@ This project analyzes historical fish stocking data from the Michigan Department
 - **Python**
   - `pandas` for data manipulation
   - `matplotlib` / `PowerBI` for visualization
-- **Jupyter Notebook** for interactive data exploration
+- **Marimo** for interactive data exploration
 - **CSV File** as raw data input
 
 ---
@@ -32,16 +32,16 @@ This project analyzes historical fish stocking data from the Michigan Department
 
 - Source: [MDNR Fish Stocking Database](https://www.dnr.state.mi.us/fishstock/)
 - Format: CSV
-- Fields include: Year, Species, Number Stocked, Waterbody, County, Stocking Method, Size, Date
+- Fields include: Year, Species, Number Stocked, Waterbody, County, Size, Date
 
 ---
 
 ## Sample Questions Explored
 
-- How has total fish stocking volume changed over time?
-- Are certain regions (counties/waterbodies) seeing more or less stocking?
-- Which species are prioritized in recent years?
-- Are trends influenced by policy, environment, or recreation?
+- what is the top 10 and bottom 10 fish species stocked from 2000 to 2025?
+- Has salmon, trout, and steelhead stocking efforts decreased or increased since 2000?
+- Which counties see the most effort in stocking? Which ones see significantly less efforts?
+- What water bodies have the lowest number of stocking efforts? What water bodies have the highest stocking efforts?
 
 ---
 
@@ -49,8 +49,8 @@ This project analyzes historical fish stocking data from the Michigan Department
 
 Once analysis is complete, I’ll summarize key findings such as:
 - Overall stocking trends
-- Ecological or policy implications
-- Recommendations for anglers, or decision-makers
+- Recommendations for anglers
+- Top fishing destinations based on stocking data
 
 ---
 
