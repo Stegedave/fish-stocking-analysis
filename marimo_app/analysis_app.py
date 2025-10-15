@@ -30,7 +30,7 @@ def _(mo):
     # **The questions we are going to answer with this analysis are:** 
     1. ### what is the top 10 and bottom 10 fish species stocked from 2000 to 2025?
     1. ### How has fish stocking changed over the years?
-    1. ### What is the average amount of fish stocked yearly, Semi decadely, and decadely?
+    1. ### What is the average amount of fish stocked yearly, Semi decadelly, and decadelly?
     1. ### What fish species has seen an increase in stocking efforts and which have seen a decline?
       - ### Has salmon, trout, and steelhead stocking efforts decreased or increased since 2000?
     1. ### What are the yearly averages of each top 10 species stocked?
@@ -64,7 +64,7 @@ def _(pd):
 
 @app.cell
 def _(mo):
-    mo.md(r"""### **Summarizing the dataset and checking rows of the data for missing values compared to totals.**""")
+    mo.md(r"""### **Summarizing the dataset and checking columns of the data for missing values compared to totals.**""")
     return
 
 
@@ -320,22 +320,57 @@ def _(plt, yearly_species):
 
     # Show the figure
     fig2
-    return
+    return (yearly_totals,)
 
 
 @app.cell
 def _(mo):
     mo.md(
         r"""
-    - #### **There is a significant drop in stocking activity around 2007–2008, followed by another dip in 2020 — likely due to COVID-19 disruptions.**
-    - #### **Peak stocking years appear to be around 2005 and 2015, of which 2015 surpassed 40 million fish stocked.**
-    - #### **After 2015, there is a consistent decline through 2020, reaching a low point of under 15 million fish stocked.**
-    - ### **A strong recovery is seen around 2016–2017, with noticeable spikes in activity peaking around 2021 / 2022.**
-    - ### **:Post-2020 shows a brief recovery, but drops again in 2023–2024.**
+    - #### **There is a significant drop in stocking activity around 2007–2008, followed by another dip in 2020, likely due to COVID-19 and the recessio in 2008.**
+    - #### **Peak stocking years appear to be around 2006 / 07 and 2016 / 17, of which 2016 / 17 surpassed 40 million fish stocked total.**
+    - #### **After 2015, there is a continued trend upwards in efforts but after 2016 / 17, there is consistent decline through 2020, reaching a low point of under 15 million fish stocked.**
+    - ### **Post-2020 shows a brief recovery, but drops again in 2023–2024.**
     - ### **2025 shows a small rebound, with totals nearing 20 million fish stocked.**
-    - # **📊 Overall, the data suggests a downward trend in fish stocking efforts from 2000 to 2025, despite occasional spikes in activity. 🪓**
+    - # **📊 In conclusion, despite periodic spikes, the overall trend from 2000 -  2025 indicates a general decline in fish stocking activity in Michigan. These patterns, such as the decline during covid 19 and the 08 recession, indicate economic, enviromental and external pressures likely significantly influence the stocking efforts. 🪓**
     """
     )
+    return
+
+
+@app.cell
+def _(mo):
+    mo.md(r"""# **Let's look at yearly averages, semi decade averages and decade averages.**""")
+    return
+
+
+@app.cell
+def _(mo, yearly_totals):
+    # yearly average 2000 to 2025 
+    yearly_avg = yearly_totals['Number'].mean()
+
+    # creating bins for semi decadal a nd decadal
+    yearly_totals['5yr_bin'] = (yearly_totals['Year'] // 5) * 5
+    yearly_totals['10yr_bin'] = (yearly_totals['Year'] // 10) * 10
+
+    # calculating semi decadal average
+    semi_decadal_avg = yearly_totals.groupby('5yr_bin')['Number'].mean().mean()
+
+    # calculating decadal average
+    decadal_avg = yearly_totals.groupby('10yr_bin')['Number'].mean().mean()
+
+    # print results
+    # print(f"Yearly Average from 2000 to 2025: {yearly_avg:,.0f} fish")
+    # print(f"Semi Decadal Average: {semi_decadal_avg:,.0f} fish")
+    # print(f"Semi Decadal Average: {decadal_avg:,.0f} fish")
+
+    # trying to render as markdown using mo
+    mo.md(f"""
+    ### **Average Fish Stocked 2000 - 2025**
+    - **Yearly Average:** {yearly_avg:,.0f} fish
+    - **Semi Decadal Average:** {semi_decadal_avg:,.0f} fish
+    - **Decadal Average:** {decadal_avg:,.0f} fish
+    """)
     return
 
 
