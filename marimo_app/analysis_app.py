@@ -36,7 +36,6 @@ def _(mo):
     1. ### What are the yearly averages of each top 10 species stocked?
     1. ### What time of year (month) does stocking usually take place? How many times a year? 
     1. ### Which counties see the most effort in stocking? Which ones see significantly less efforts? 
-    1. ### What Counties see the highest stocking efforts and which ones see the lowest stocking efforts?
     1. ### What water bodies have the lowest number of stocking efforts? What water bodies have the highest stocking efforts?
     """
     )
@@ -127,7 +126,7 @@ def _(df_raw, pd):
     # convert date to datetime and keep only the date part (drop the time part)
     df_clean['Date'] = pd.to_datetime(df_clean['Date'], errors='coerce').dt.date
 
-    # print(df_clean['Date'].dropna().unique()[:10])
+    print(df_clean['Date'].dropna().unique()[:10])
     return (df_clean,)
 
 
@@ -327,12 +326,12 @@ def _(plt, yearly_species):
 def _(mo):
     mo.md(
         r"""
-    - #### **There is a significant drop in stocking activity around 2007–2008, followed by another dip in 2020, likely due to COVID-19 and the recessio in 2008.**
+    - #### **There is a significant drop in stocking activity around 2007–2008, followed by another dip in 2020, likely due to COVID-19 and the recession in 2008.**
     - #### **Peak stocking years appear to be around 2006 / 07 and 2016 / 17, of which 2016 / 17 surpassed 40 million fish stocked total.**
     - #### **After 2015, there is a continued trend upwards in efforts but after 2016 / 17, there is consistent decline through 2020, reaching a low point of under 15 million fish stocked.**
     - ### **Post-2020 shows a brief recovery, but drops again in 2023–2024.**
     - ### **2025 shows a small rebound, with totals nearing 20 million fish stocked.**
-    - # **📊 In conclusion, despite periodic spikes, the overall trend from 2000 -  2025 indicates a general decline in fish stocking activity in Michigan. These patterns, such as the decline during covid 19 and the 08 recession, indicate economic, enviromental and external pressures likely significantly influence the stocking efforts. 🪓**
+    # **📊 In conclusion, despite periodic spikes, the overall trend from 2000 - 2025 indicates a general decline in fish stocking activity in Michigan. These patterns, such as the decline during covid 19 and the 08 recession, indicate economic, enviromental and external pressures likely significantly influence the stocking efforts. 🪓**
     """
     )
     return
@@ -340,7 +339,7 @@ def _(mo):
 
 @app.cell
 def _(mo):
-    mo.md(r"""# **Let's look at yearly averages, semi decade averages and decade averages.**""")
+    mo.md(r"""## -**Let's look at yearly averages, semi decade averages and decade averages.**""")
     return
 
 
@@ -354,10 +353,10 @@ def _(mo, yearly_totals):
     yearly_totals['10yr_bin'] = (yearly_totals['Year'] // 10) * 10
 
     # calculating semi decadal average
-    semi_decadal_avg = yearly_totals.groupby('5yr_bin')['Number'].mean().mean()
+    semi_decadal_avg = yearly_totals.groupby('5yr_bin')['Number'].sum().mean()
 
     # calculating decadal average
-    decadal_avg = yearly_totals.groupby('10yr_bin')['Number'].mean().mean()
+    decadal_avg = yearly_totals.groupby('10yr_bin')['Number'].sum().mean()
 
     # print results
     # print(f"Yearly Average from 2000 to 2025: {yearly_avg:,.0f} fish")
@@ -366,11 +365,103 @@ def _(mo, yearly_totals):
 
     # trying to render as markdown using mo
     mo.md(f"""
-    ### **Average Fish Stocked 2000 - 2025**
+    ## **Average Fish Stocked 2000 - 2025**
     - **Yearly Average:** {yearly_avg:,.0f} fish
-    - **Semi Decadal Average:** {semi_decadal_avg:,.0f} fish
-    - **Decadal Average:** {decadal_avg:,.0f} fish
+    - **Semi Decadal Average (every 5 years):** {semi_decadal_avg:,.0f} fish
+    - **Decadal Average (every 10 years):** {decadal_avg:,.0f} fish
     """)
+    return
+
+
+@app.cell
+def _(mo):
+    mo.md(r"""## **📊 From 2000 to 2025 Michigan stocked fish at a consistent and large scale. On average about 26.5 million fish stocked each year. When viewed in longer timeframes this averages to around 114.8 million fish stocked every 5 years and 229.6 million every 10 years. This reflects a sustained commitment to fishery management across decades.**""")
+    return
+
+
+@app.cell
+def _(mo):
+    mo.md(r"""# **Let's look at which species has seen an increase in stocking efforts and which have seen a decline.**""")
+    return
+
+
+@app.cell
+def _(pd, plt, yearly_species):
+    import numpy as np
+    from scipy.stats import linregress
+
+    # ensure yearly totals per species
+    species_trends = (
+        yearly_species.groupby(['Year', 'Species'])['Number']
+            .sum()
+            .reset_index()
+    )
+
+    # filter for 200-2025
+    species_trends = species_trends[
+        (species_trends['Year'] >= 2000) & (species_trends['Year'] <=2025)
+    ]
+
+    # claculate trend for each species
+    trend_results = []
+    for species, group in species_trends.groupby('Species'):
+        if len(group['Year'].unique()) > 3:
+            slope, intercept, r_value, p_value, std_err = linregress(group['Year'], group['Number'])
+            trend_results.append({
+                'Species' : species,
+                'Slope' : slope,
+                'Mean Stocked' : group['Number'].mean(),
+                'Years Observed' : group['Year'].nunique()
+            })
+    trend_df = pd.DataFrame(trend_results)
+
+    # identify increase & decrease
+    trend_df['Trend'] = np.where(trend_df['Slope'] > 0, 'Increasing', 'Decreasing')
+
+    # top 10 increasing and descreasing
+    top_increasing = trend_df.sort_values('Slope', ascending=False).head(10)
+    top_decreasing = trend_df.sort_values('Slope', ascending=True).head(10)
+
+    print(top_increasing)
+    # creating visual for the trends
+    fig3, ax3 = plt.subplots(figsize=(10,6))
+    ax3.barh(top_increasing['Species'], top_increasing['Slope'], color='mediumseagreen')
+    ax3.set_title('Top 10 Increasing Fish Stocked (2000-2025')
+    ax3.set_xlabel('Trend Slope (Fish per Year')
+    fig3
+    return top_decreasing, trend_df
+
+
+@app.cell
+def _(plt, top_decreasing):
+    # visuals for decreasing trend
+    print(top_decreasing)
+    fig4,ax4 = plt.subplots(figsize=(10,6))
+    ax4.barh(top_decreasing['Species'], top_decreasing['Slope'], color='salmon')
+    ax4.set_title('Top 10 Decreasing Fish Stocked (2000 - 2025)')
+    ax4.set_xlabel('Trend Slope (Fish Per Year')
+    fig4
+    return
+
+
+@app.cell
+def _(trend_df):
+    # focusing on STS (Salmon, Trout, Steelhead)
+    focus_species = trend_df[
+        trend_df['Species'].str.contains('Salmon|Trout|Steelhead', case=False)
+    ].sort_values('Slope', ascending=False)
+    print(focus_species)
+    return (focus_species,)
+
+
+@app.cell
+def _(focus_species, plt):
+    # focusing on STS
+    fig5, ax5 = plt.subplots(figsize=(10,6))
+    ax5.barh(focus_species['Species'], focus_species['Slope'], color='salmon')
+    ax5.set_title('Salmon Trout Steelhead Trend 2000 - 2025')
+    ax5.set_xlabel('Trend Slope (Fish per Year')
+    fig5
     return
 
 
