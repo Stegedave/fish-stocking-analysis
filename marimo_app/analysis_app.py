@@ -9,6 +9,7 @@ def _():
     import marimo as mo
     import pandas as pd
     import matplotlib.pyplot as plt
+    import matplotlib.ticker as mtick
     return mo, pd, plt
 
 
@@ -17,7 +18,7 @@ def _(mo):
     mo.md(
         """
     #🐟Fish Stocking Data Analysis🎣.
-    ## Looking at stocking reports provided by the Michigan Department of Natural Resources to see how efforts have changed overtime.
+    ## Looking at stocking reports provided by the Michigan Department of Natural Resources to see how efforts have changed overtime from 2000 - 2025.
     """
     )
     return
@@ -81,12 +82,6 @@ def _(df_raw, pd):
 
 
 @app.cell
-def _(mo):
-    mo.md(r""" """)
-    return
-
-
-@app.cell
 def _(df_raw):
     # Checking row values to better understand the dataset
     print('Range sample values:')
@@ -141,7 +136,7 @@ def _(mo):
     - Walleye leads by a huge margin with over **354** million fish stocked. 🐟🐟🐟🐟
     - Trout & Salmon dominate the list showing a priority and focus on **coldwater species**.🐟🐟🐟
     - Atlantic Salmon are stocked consistently but are by far **less stocked**.🐟🐟
-    - Flathead minnows are a focus providing solid bait fish for predetor fish. 🐟
+    - Flathead minnows are a focus providing solid bait fish for predator fish. 🐟
 
     ###**This reflects long term investment in popular sport fish and strategic strategies across Michigan Waters.**
     """
@@ -233,12 +228,12 @@ def _(mo):
     ### This looks at the bottom 10 species of fish stocked by number of fish per species by year.
 
     ##The following species were stocked between 2000 to 2025 (26 years). **Some have only been stocked once throughout the 26 years this dataset covers.**
-    - Species like flathead catfish & white sucker were stocked **only once**, with just a handful of fish. 🐟🐟🐟🐟
-    - Some species were stocked for 3 years and in **very limited numbers**.🐟🐟🐟
+    - Species like flathead catfish & white sucker were stocked **only once**, with just a handful of fish. This reflects a healthy self sustaining population. 🐟🐟🐟🐟
+    - Some species were stocked for 3 years and in **very limited numbers**. Tiger Musky is a world renouned prized sport fish.🐟🐟🐟
     - Stocking efforts are heavily focused on sport and game fish.🐟🐟
-    - Some native or less popular species have minimal stocking efforts or experimental at best.🐟
+    - Some native or less popular species have minimal stocking efforts or experimental at best. Most likely due to a healthy self sustaining population.🐟
 
-    ###**This again reflects a long term investment in popular sport fish & game fish and strategic strategies across Michigan Waters.**
+    ###**This again reflects a long term investment in popular sport fish & game fish and strategic strategies across Michigan Waters. Focusing on ecological and predator prey balance.**
     """
     )
     return
@@ -331,7 +326,7 @@ def _(mo):
     - #### **After 2015, there is a continued trend upwards in efforts but after 2016 / 17, there is consistent decline through 2020, reaching a low point of under 15 million fish stocked.**
     - ### **Post-2020 shows a brief recovery, but drops again in 2023–2024.**
     - ### **2025 shows a small rebound, with totals nearing 20 million fish stocked.**
-    # **📊 In conclusion, despite periodic spikes, the overall trend from 2000 - 2025 indicates a general decline in fish stocking activity in Michigan. These patterns, such as the decline during covid 19 and the 08 recession, indicate economic, enviromental and external pressures likely significantly influence the stocking efforts. 🪓**
+    # **📊 In conclusion, despite periodic spikes, the overall trend from 2000 - 2025 indicates a general decline in fish stocking activity within Michigan. Factors such as; ecological, enviromental, & predator prey balance likely played a significant role aswell as political pressures.📊**
     """
     )
     return
@@ -339,7 +334,7 @@ def _(mo):
 
 @app.cell
 def _(mo):
-    mo.md(r"""## -**Let's look at yearly averages, semi decade averages and decade averages.**""")
+    mo.md(r"""## **Let's look at yearly averages, semi decade averages and decade averages.**""")
     return
 
 
@@ -366,9 +361,9 @@ def _(mo, yearly_totals):
     # trying to render as markdown using mo
     mo.md(f"""
     ## **Average Fish Stocked 2000 - 2025**
-    - **Yearly Average:** {yearly_avg:,.0f} fish
-    - **Semi Decadal Average (every 5 years):** {semi_decadal_avg:,.0f} fish
-    - **Decadal Average (every 10 years):** {decadal_avg:,.0f} fish
+    - # **Yearly Average:** {yearly_avg:,.0f} fish
+    - # **Semi Decadal Average (every 5 years):** {semi_decadal_avg:,.0f} fish
+    - # **Decadal Average (every 10 years):** {decadal_avg:,.0f} fish
     """)
     return
 
@@ -427,9 +422,21 @@ def _(pd, plt, yearly_species):
     fig3, ax3 = plt.subplots(figsize=(10,6))
     ax3.barh(top_increasing['Species'], top_increasing['Slope'], color='mediumseagreen')
     ax3.set_title('Top 10 Increasing Fish Stocked (2000-2025')
-    ax3.set_xlabel('Trend Slope (Fish per Year')
+    ax3.set_xlabel('Trend Slope (Fish per Year)')
     fig3
     return top_decreasing, trend_df
+
+
+@app.cell
+def _(mo):
+    mo.md(
+        r"""
+    - # *The data shows fast growth for species like lake herring and flathead minnow.*
+    - # *While some species show a fast growth in stocking numbers, salmonoids have maintained moderate efforts but have a high total stocking number.*
+    - # *Small species like yellow perch and black crappie are slow growing in terms of slope and are naturally abundant in Michigan waters. There is still some stocking effort occuring but not as targeted as other species.*
+    """
+    )
+    return
 
 
 @app.cell
@@ -445,6 +452,26 @@ def _(plt, top_decreasing):
 
 
 @app.cell
+def _(mo):
+    mo.md(
+        r"""
+    - # *Significant decline in Chinook Salmon efforts, although they are the abdundant salmon species in Michigan waters, it shows a fine balance between population and ecosystem management.* ***(Salmon were introduced in Michigan to combat the invasive Alewife population within the Great Lakes in 1966).***
+    - # **Alewife populations have been on the decline in recent times as evidenced by fluctuations in population by year and lake. Generally Lake Michigan has a healthier population according to recent studies & observations. Lake Huron's population declined in 2003 and has not fully recovered.**
+    - # *Key game species like Lake Trout, Chinook Salmon, Walleye, Brown Trout, and Brooke Trout are top predetor fish and most likely reflect ecosystem management strategies or population balancing or both.*
+    - # *Nothern Pike and Channel Catfish show a decline but also have a lower stocking average, meaning these species more than likely have a healthy self sustaining population in a majority of Michigan waters.*
+    - # **The steady decline in alot of popular game fish most likely suggests that stocking efforts are taking a more ecological approach and are focusing on predetor prey balance.**
+    """
+    )
+    return
+
+
+@app.cell
+def _(mo):
+    mo.md(r"""# *Let's focus on Salmon, Steelhead, & Trout.*""")
+    return
+
+
+@app.cell
 def _(trend_df):
     # focusing on STS (Salmon, Trout, Steelhead)
     focus_species = trend_df[
@@ -455,13 +482,35 @@ def _(trend_df):
 
 
 @app.cell
+def _(mo):
+    mo.md(r"""# There is a slight increase in Coho & Atlantic salmon efforts but other than that, species are on a decline. Especially Chinook Salmon. Although they are the most widely caught, stocking efforts have decreased showing atlest some kind of corrolation between population, stocking efforts & Alewife populations""")
+    return
+
+
+@app.cell
 def _(focus_species, plt):
     # focusing on STS
     fig5, ax5 = plt.subplots(figsize=(10,6))
-    ax5.barh(focus_species['Species'], focus_species['Slope'], color='salmon')
-    ax5.set_title('Salmon Trout Steelhead Trend 2000 - 2025')
-    ax5.set_xlabel('Trend Slope (Fish per Year')
+
+    # color by slope
+    colors = ['green' if slope > 0 else 'red' for slope in focus_species['Slope']]
+
+    ax5.barh(focus_species['Species'], focus_species['Slope'], color=colors)
+    ax5.set_title('Salmon, Steelhead, Trout Trend 2000 - 2025')
+    ax5.set_xlabel('Trend Slope (Fish per Year)')
     fig5
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+    # - Looking at the data, **it is surprising lake trout has been on the decline in terms of stocking efforts.**
+    # -  Coho & Atltantic salmon are **prized catches** and are on the rise which is a good sign for the fisheries for these particular fish.,
+    # - **Did not know brooke trout was stocked**. Brooke trout are naturally occuring in Michigan. Shows that there is interest and efforts to support the natural brook trout fisheries within the state.
+    """
+    )
     return
 
 
