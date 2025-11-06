@@ -34,7 +34,6 @@ def _(mo):
     1. ### What is the average amount of fish stocked yearly, Semi decadelly, and decadelly?
     1. ### What fish species has seen an increase in stocking efforts and which have seen a decline?
       - ### Has salmon, trout, and steelhead stocking efforts decreased or increased since 2000?
-    1. ### What are the yearly averages of each top 10 species stocked?
     1. ### What time of year (month) does stocking usually take place? How many times a year? 
     1. ### Which counties see the most effort in stocking? Which ones see significantly less efforts? 
     1. ### What water bodies have the lowest number of stocking efforts? What water bodies have the highest stocking efforts?
@@ -64,7 +63,7 @@ def _(pd):
 
 @app.cell
 def _(mo):
-    mo.md(r"""### **Summarizing the dataset and checking columns of the data for missing values compared to totals.**""")
+    mo.md(r"""# Checking for missing values""")
     return
 
 
@@ -444,7 +443,7 @@ def _(plt, top_decreasing):
     # visuals for decreasing trend
     print(top_decreasing)
     fig4,ax4 = plt.subplots(figsize=(10,6))
-    ax4.barh(top_decreasing['Species'], top_decreasing['Slope'], color='salmon')
+    ax4.barh(top_decreasing['Species'], top_decreasing['Slope'], color='red')
     ax4.set_title('Top 10 Decreasing Fish Stocked (2000 - 2025)')
     ax4.set_xlabel('Trend Slope (Fish Per Year')
     fig4
@@ -507,8 +506,149 @@ def _(mo):
     mo.md(
         r"""
     # - Looking at the data, **it is surprising lake trout has been on the decline in terms of stocking efforts.**
-    # -  Coho & Atltantic salmon are **prized catches** and are on the rise which is a good sign for the fisheries for these particular fish.,
+    # -  Coho & Atltantic salmon are **prized catches** and are on the rise which is a good sign for the fisheries for these particular fish.
     # - **Did not know brooke trout was stocked**. Brooke trout are naturally occuring in Michigan. Shows that there is interest and efforts to support the natural brook trout fisheries within the state.
+    #- Overall, Salmon, Steelhead & Trout are on the decline by majority. Coho & Atlantic salmon are the ones seeing an increase with every other individual species seeing a decline. This indicates one of four things in my opinion; **1) The fisheries for the fishes on the decline indicate a healthy and self sustaning population. In other words, a healthy population ratio between the taregted species and their prey. 2) The funding for said programs has drastically decreased. 3) There is an unhealthy balance of the target species and their prey. Or, 4) Unsuitable habitat coupled with 2 and 3.** (Furthere analysis is needed to fully understand the root cause of the decline)
+    """
+    )
+    return
+
+
+@app.cell
+def _(mo):
+    mo.md(r"""## **Lets look at Monthly totals from 2000 to 2025**""")
+    return
+
+
+@app.cell
+def _(df_clean):
+    # total fish stocked per county
+    county_stocked = df_clean.groupby('County')['Number'].sum().reset_index(name='total_stocked')
+
+    # sort from most to least
+    county_stocked = county_stocked.sort_values(by='total_stocked', ascending=False)
+
+    # declaring top and bottom 10
+    top_10_counties = county_stocked.head(10)
+    bottom_10_counties = county_stocked.tail(10)
+
+    # show the top and bottom counties
+    print("Counties with the most stocking efforts:")
+    print(top_10_counties, '\n') # top 10 counties
+
+    print("Counties with the lest stocking efforts:")
+    print(bottom_10_counties) # bottom 10 counties
+    return bottom_10_counties, top_10_counties
+
+
+@app.cell
+def _(df_clean, pd, plt):
+    #Ensure Date is datetime format
+    df_clean['Date'] = pd.to_datetime(df_clean['Date'])
+
+    # extract year and month
+    df_clean['Year'] = df_clean['Date'].dt.year
+    df_clean['month'] = df_clean['Date'].dt.month
+
+    # total nimber of fished stocked per month
+    monthly_stocked = df_clean.groupby('month')['Number'].sum().reset_index(name='total_stocked')
+    monthly_stocked = monthly_stocked.sort_values('month')
+    monthly_stocked
+
+    # visualization
+    fig6, ax6 = plt.subplots(figsize=(10,6))
+
+    # color for bars
+    bar_colors = ['green'] * len(monthly_stocked)
+
+    # horizontal bar chart
+    ax6.barh(monthly_stocked['month'].astype(str), monthly_stocked['total_stocked'], color=bar_colors)
+
+    # adding value labels
+    for i, v in enumerate(monthly_stocked['total_stocked']):
+        ax6.text(v + 0.5, i, f"{v:,}", color='black', va='center')
+
+    # titles and labels
+    ax6.set_title('Total Fish Stocked per Month (2000-2025')
+    ax6.set_xlabel('Total Fish Stocked')
+    ax6.set_ylabel('Month')
+
+    # show plot
+    fig6
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+    # **Over the years, majority of the stocking efforts have by far been in May. 290 Million fish have been stocked in May from 2000 to 2025. April is a far 2nd with 207 million fished stocked from 2000 to 2025.**
+
+    # We can safetly say that majority of the stocking takes plane in **April, May & June respectively.**
+    """
+    )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""# **Let's plot top and bottom county numbers and then dive deeper and uncover insights**""")
+    return
+
+
+@app.cell
+def _(plt, top_10_counties):
+    # plotting top 10 counties
+    fig7, ax7 = plt.subplots(figsize=(10,6))
+    ax7.barh(top_10_counties["County"][::-1], top_10_counties['total_stocked'][:: -1], color="green") #reversed for better order
+
+    # setting titles
+    ax7.set_title("Top 10 Counties by Total Fish Stocked (2000 - 2025)")
+    ax7.set_xlabel("Fish Stocked")
+
+    # show plot
+    fig7
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+    # **Delta county by far sees the biggest effors. Most of the top 10 are what are considered prestine fishing waters within Michigan. Benzonia & Manistee counties are known hot spots for Salmon, Steelhead and Trout.**
+    - **Many of the counties stocked are presite fishing waters within Michigan and produce quality fish consistenly**
+    - **Muskegon River,  Big Manistee & Little Manistee, and Betsite River within Benzonia county are known State wide as solid fisheries with plenty of access for Salmon, Trout, and Steelhead.**
+    - **Targeting tributaries of the river systems within the top 10 counties is VERY LIKELY to produce solid, quality fishing opportunities. (Provided you are targeting the dominant species within that fishery, at the right time of year, and using the right tackle)**
+    - **The upper paninsula remains to be a stable of a fishery for Michiganders and tourists both domestic and foreign**
+    """
+    )
+    return
+
+
+@app.cell
+def _(bottom_10_counties, plt):
+    # bottom 10 plot
+    fig8, ax8 = plt.subplots(figsize=(10,6))
+    ax8.barh(bottom_10_counties['County'][:: -1], bottom_10_counties['total_stocked'][:: -1], color='red') # reversed for better order
+
+    # setting titles
+    ax8.set_title("Bottom 10 Counties By Total Fish Stocked (2000 - 2025)")
+    ax8.set_xlabel("Total Fish Stocked")
+
+    # show plot
+    fig8
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+    # **To my suprise Midland & Saginaw are up there in terms of the least stocked counties. Mainly due to being a resident and hearing stories from other fishermen plus personal experience, the fishery in those counties seem to be healthy in the sense that you can catch a variety of fish from Catfish, Pike, Musky, Walleye, Sturgeon, and if you are very lucky an odd ball Salmon or Steelhead. Mainly steelhead and salmon are caught trolling within Midland's Titabawasee River around Posseyville bridge. Sturgeon can be caught from Posseyville bridge going downstream into the Saginaw River and the Saginaw Bay. The Chippewa River within Midland County is known to be a solid bass fishing location, excellent for fly fishing. Main thing to be aware of is pollution and do not eat advisories when fishing in Saginaw / Midland waters.**
+
+    - **Most if not all of the bottom 10 counties are not known to be solid fishing locations and to some extent locals consider the river systems within as ' trash' & 'polluted". Saginaw bay is a solid fishery and has good numbers of multiple species but going upstream into Midland via the Saginaw River the more the river deteriorates according to locals.**
+    - **The closer you are to Dow Chemical generally from there downwards is considered iffy in terms of polution. From the Tridge going upwards towards Sanford you have somewhat healthy fisheries for some species but accesss is limited and water quality varies.**
+    -
     """
     )
     return
