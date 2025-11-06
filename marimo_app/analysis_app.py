@@ -550,7 +550,7 @@ def _(df_clean, pd, plt):
     df_clean['Year'] = df_clean['Date'].dt.year
     df_clean['month'] = df_clean['Date'].dt.month
 
-    # total nimber of fished stocked per month
+    # total number of fished stocked per month
     monthly_stocked = df_clean.groupby('month')['Number'].sum().reset_index(name='total_stocked')
     monthly_stocked = monthly_stocked.sort_values('month')
     monthly_stocked
@@ -647,10 +647,38 @@ def _(mo):
     # **To my suprise Midland & Saginaw are up there in terms of the least stocked counties. Mainly due to being a resident and hearing stories from other fishermen plus personal experience, the fishery in those counties seem to be healthy in the sense that you can catch a variety of fish from Catfish, Pike, Musky, Walleye, Sturgeon, and if you are very lucky an odd ball Salmon or Steelhead. Mainly steelhead and salmon are caught trolling within Midland's Titabawasee River around Posseyville bridge. Sturgeon can be caught from Posseyville bridge going downstream into the Saginaw River and the Saginaw Bay. The Chippewa River within Midland County is known to be a solid bass fishing location, excellent for fly fishing. Main thing to be aware of is pollution and do not eat advisories when fishing in Saginaw / Midland waters.**
 
     - **Most if not all of the bottom 10 counties are not known to be solid fishing locations and to some extent locals consider the river systems within as ' trash' & 'polluted". Saginaw bay is a solid fishery and has good numbers of multiple species but going upstream into Midland via the Saginaw River the more the river deteriorates according to locals.**
-    - **The closer you are to Dow Chemical generally from there downwards is considered iffy in terms of polution. From the Tridge going upwards towards Sanford you have somewhat healthy fisheries for some species but accesss is limited and water quality varies.**
-    -
+    - **Generally, the closer you are to Dow Chemical, from there downwards is considered iffy in terms of polution and water quality. From the Tridge going upwards towards Sanford you have somewhat healthy fisheries for some species but accesss is limited and water quality varies.**
+    - **Sanford is known as a solid fishery but since the flood, it has not been the same. Efforts are expected to pick back up once the dam is completed and water in Sanford Lake returns to normal.**
+    - **Saginaw is known to produce good numbers of catfish and from talking to local anglers, you have a shot at Sturgeon but hookups are rare although possible. One example is a story one angler told me and he mentioned catfishing but when he saw he had a Sturgeon he was equally surprised. From my understanding and according to this dataset, Midland Mi, at posseyville bridge gets stocked yearly with Sturgeon. Their migration route to Lake Huron starts there atleast for the ones within the Great Lakes Bay Region.**
+    - **Healthy musky populations are in Tittabawasee river. If you know what to use in terms of lures or baits you will hook one or more. Pike are also in very healthy numbers. Freshwater drum are also abundant.**
+    - **All in all if you are targeting steelhead, salmon & trout your better off going North, looking for cold spring fed streams/rivers/creeks. Brooke Trout occur naturally within many of Michigan's cold water streams so stocking data is going to be limited and some fisheries will show no stocking data for Brooke Trout. Generally, I found that many if not all of the good trout fisheries to be North of US 10.**
     """
     )
+    return
+
+
+@app.cell
+def _(df_clean):
+    # count number of stocking efforts per water body
+    waterbody_efforts = (
+        df_clean.groupby('Water Body')
+        .size()
+        .reset_index(name="Stocking Efforts")
+    )
+
+    # Identify top and bottom 10 water bodies
+    top_10_waterbodies = (
+        waterbody_efforts.sort_values(by="Stocking Efforts", ascending=False).head(10)
+    )
+
+    bottom_10_waterbodies = (
+        waterbody_efforts.sort_values(by="Stocking Efforts", ascending=False).tail(10)
+    )
+
+    # show top and bottom 10 waterbodies by stocking effort.
+    print(top_10_waterbodies)
+    print('\n')
+    print(bottom_10_waterbodies)
     return
 
 
