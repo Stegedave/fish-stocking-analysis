@@ -7,14 +7,14 @@ This project analyzes historical fish stocking data from the Michigan Department
 ---
 
 ## Objectives
-**Trend analysis:** Determine weather total stocking numbers have increased or decreased since 2000.
-**Geographic Impact:** Identify which lakes, rivers, or streams have seen:
-  - A **significant increase** in stocking efforts.
-  - A **notable decrease** or complete halt in stocking.
-- **Species Insights:**
-  - Determine the **most stocked species**.
-  - Determine the **least stocked species**.
-- **Temporal Breakdown:** Evaluate changes in stocking by year and season, if data allows.
+**What is the top 10 and bottom 10 fish species stocked from 2000 to 2025?
+How has fish stocking changed over the years?
+What is the average amount of fish stocked yearly, Semi decadelly, and decadelly?
+What fish species has seen an increase in stocking efforts and which have seen a decline?
+  - Has salmon, trout, and steelhead stocking efforts decreased or increased since 2000?
+What time of year (month) does stocking usually take place? How many times a year? 
+Which counties see the most effort in stocking? Which ones see significantly less efforts? 
+What water bodies have the lowest number of stocking efforts? What water bodies have the highest stocking efforts?**
 
 ---
 
