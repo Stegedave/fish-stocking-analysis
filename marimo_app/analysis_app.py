@@ -77,7 +77,7 @@ def _(df_raw, pd):
         "missing_%": round(df_raw.isnull().mean() *100, 2)
     })
     missing_summary.sort_values(by="missing_%", ascending=False)
-    return
+    return (missing_summary,)
 
 
 @app.cell
@@ -180,7 +180,12 @@ def _(df_clean, pd):
 
     # top 10 stocked fish
     top_10_consistent
-    return bottom_10_consistent, top_10_consistent, yearly_species
+    return (
+        bottom_10_consistent,
+        species_stats,
+        top_10_consistent,
+        yearly_species,
+    )
 
 
 @app.cell
@@ -423,7 +428,7 @@ def _(pd, plt, yearly_species):
     ax3.set_title('Top 10 Increasing Fish Stocked (2000-2025')
     ax3.set_xlabel('Trend Slope (Fish per Year)')
     fig3
-    return top_decreasing, trend_df
+    return top_decreasing, top_increasing, trend_df
 
 
 @app.cell
@@ -538,7 +543,7 @@ def _(df_clean):
 
     print("Counties with the lest stocking efforts:")
     print(bottom_10_counties) # bottom 10 counties
-    return bottom_10_counties, top_10_counties
+    return bottom_10_counties, county_stocked, top_10_counties
 
 
 @app.cell
@@ -575,7 +580,7 @@ def _(df_clean, pd, plt):
 
     # show plot
     fig6
-    return
+    return (monthly_stocked,)
 
 
 @app.cell(hide_code=True)
@@ -679,6 +684,146 @@ def _(df_clean):
     print(top_10_waterbodies)
     print('\n')
     print(bottom_10_waterbodies)
+    return bottom_10_waterbodies, top_10_waterbodies, waterbody_efforts
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+    - # **Almost all of the top 10 water bodies stocked (The Manistee River, Platte River, Au Sable River, and Rogue River), are all top fishing destinations in Michigan. If you pick any one of those rivers to fish you will catch some healthy fish. Provided your fishing the right technique under the right conditions.**
+    - # As a resident of Michigan I have not heard of many of the bottom 10 bodies of water stocked. All of them have only seen 1 stocking effort across the 26 years this data set covers.
+    # **Next we will look at the top species stocked for these water bodies so we can get an idea of what fish are being stocked most often within the top 10 river systems.**
+    """
+    )
+    return
+
+
+@app.cell
+def _(df_clean):
+    from tabulate import tabulate # ALIGN TEXT BETTER WHEN PRINTING
+
+    # Count total number of fish stocked per water body and species
+    species_totals_report = (
+        df_clean.groupby(['Water Body', 'Species'], as_index=False)['Number']
+        .sum()
+    )
+
+    # count number of stocking efforts per water body
+    waterbody_efforts_report = (
+        df_clean.groupby('Water Body')
+        .size()
+        .reset_index(name='Stocking Efforts')
+    )
+
+    # get the top 10 water bodies by stocking effort
+    top_10_waterbodies_report = (
+        waterbody_efforts_report.sort_values(by='Stocking Efforts', ascending=False)
+        .head(10)
+    )
+    # count total number of fish stocked per water body and species
+    species_totals_top10 = (
+        df_clean.groupby(['Water Body', 'Species'], as_index=False)['Number']
+        .sum()
+    )
+
+    # get the top 10 water bodies by stocking effort
+    top_10_waterbodies_top10 = (
+        waterbody_efforts_report.sort_values(by='Stocking Efforts', ascending=False)
+        .head(10)
+    )
+
+    # create a column with the top 3 species as a comma-separated string
+    top_species_summary_top10 = []
+    for wb in top_10_waterbodies_top10['Water Body']:
+        subset_top10 = (
+            species_totals_top10[species_totals_top10['Water Body'] == wb]
+            .sort_values('Number', ascending=False)
+            .head(3)  # top 3 species
+        )
+        # convert to list of formatted strings 
+        species_list_top10 = [f"{sp} ({num:,})" for sp, num in
+                              zip(subset_top10['Species'], subset_top10['Number'])]
+
+        # if fewer than 3, fill remaining with None
+        while len(species_list_top10) < 3:
+            species_list_top10.append('(-- NONE --)')
+
+        # joining into one string
+        top_species_summary_top10.append(", ".join(species_list_top10))
+
+    top_10_waterbodies_top10['Top 3 Species'] = top_species_summary_top10
+
+    # using tabulate to show clean output
+    print(tabulate(top_10_waterbodies_top10, headers='keys', tablefmt='fancy_grid', showindex=False, maxcolwidths=[30, None, 70]))
+    return (
+        top_10_waterbodies_report,
+        top_10_waterbodies_top10,
+        top_species_summary_top10,
+        waterbody_efforts_report,
+    )
+
+
+@app.cell
+def _(
+    bottom_10_consistent,
+    bottom_10_counties,
+    bottom_10_waterbodies,
+    county_stocked,
+    df_clean,
+    df_raw,
+    focus_species,
+    missing_summary,
+    monthly_stocked,
+    pd,
+    species_stats,
+    top_10_consistent,
+    top_10_counties,
+    top_10_waterbodies,
+    top_10_waterbodies_report,
+    top_10_waterbodies_top10,
+    top_decreasing,
+    top_increasing,
+    top_species_summary_top10,
+    trend_df,
+    waterbody_efforts,
+    waterbody_efforts_report,
+    yearly_species,
+    yearly_totals,
+):
+    # dictionary of datasets with sheet names
+    datasets = {
+        "RawData": df_raw,
+        "MissingSummary": missing_summary,
+        "CleanedData": df_clean,
+        "YearlySpecies": yearly_species,
+        "SpeciesStats": species_stats,
+        "Top10Consistent": top_10_consistent,
+        "Bottom10Consistent": bottom_10_consistent,
+        "YearlyTotals": yearly_totals,
+        "TrendData": trend_df,
+        "TopIncreasing": top_increasing,
+        "TopDecreasing": top_decreasing,
+        "FocusSpecies": focus_species,
+        "CountyStocked": county_stocked,
+        "Top10Counties": top_10_counties,
+        "Bottom10Counties": bottom_10_counties,
+        "MonthlyStocked": monthly_stocked,
+        "WaterbodyEfforts": waterbody_efforts,
+        "Top10Waterbodies": top_10_waterbodies,
+        "Bottom10Waterbodies": bottom_10_waterbodies,
+        "WaterbodyEffortsReport": waterbody_efforts_report,
+        "Top10WaterbodiesReport": top_10_waterbodies_report,
+        "Top10WaterbodiesTop10": top_10_waterbodies_top10,
+        "TopSpeciesSummaryTop10": pd.DataFrame({"Top3Species": top_species_summary_top10})
+    }
+
+    # save all datasets to a single Excel file with multiple sheets
+    with pd.ExcelWriter("Michigan_Fish_Stocking_Data.xlsx", engine="xlsxwriter") as writer:
+        for sheet_name, df in datasets.items():
+            # Save each dataframe to its own sheet
+            df.to_excel(writer, sheet_name=sheet_name, index=False)
+    print("!!-- SAVED 'Michigan_Fish_Stocking_Data.xlsx' IN CURRENT WORKING DIRECTORY--!!")
     return
 
 
