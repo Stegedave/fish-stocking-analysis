@@ -59,7 +59,7 @@ def _(mo):
 @app.cell
 def _(pd):
     # load the raw csv
-    df_raw = pd.read_csv('../data/fish_stocking_data.csv')
+    df_raw = pd.read_csv('./data/fish_stocking_data.csv')
     df_raw.head()
     return (df_raw,)
 
@@ -80,7 +80,7 @@ def _(df_raw, pd):
         "missing_%": round(df_raw.isnull().mean() *100, 2)
     })
     missing_summary.sort_values(by="missing_%", ascending=False)
-    return (missing_summary,)
+    return
 
 
 @app.cell
@@ -183,12 +183,7 @@ def _(df_clean, pd):
 
     # top 10 stocked fish
     top_10_consistent
-    return (
-        bottom_10_consistent,
-        species_stats,
-        top_10_consistent,
-        yearly_species,
-    )
+    return bottom_10_consistent, top_10_consistent, yearly_species
 
 
 @app.cell
@@ -431,7 +426,7 @@ def _(pd, plt, yearly_species):
     ax3.set_title('Top 10 Increasing Fish Stocked (2000-2025')
     ax3.set_xlabel('Trend Slope (Fish per Year)')
     fig3
-    return top_decreasing, top_increasing, trend_df
+    return top_decreasing, trend_df
 
 
 @app.cell
@@ -546,7 +541,7 @@ def _(df_clean):
 
     print("Counties with the lest stocking efforts:")
     print(bottom_10_counties) # bottom 10 counties
-    return bottom_10_counties, county_stocked, top_10_counties
+    return bottom_10_counties, top_10_counties
 
 
 @app.cell
@@ -577,13 +572,13 @@ def _(df_clean, pd, plt):
         ax6.text(v + 0.5, i, f"{v:,}", color='black', va='center')
 
     # titles and labels
-    ax6.set_title('Total Fish Stocked per Month (2000-2025')
+    ax6.set_title('Total Fish Stocked per Month (2000-2025)')
     ax6.set_xlabel('Total Fish Stocked')
     ax6.set_ylabel('Month')
 
     # show plot
     fig6
-    return (monthly_stocked,)
+    return
 
 
 @app.cell(hide_code=True)
@@ -687,7 +682,7 @@ def _(df_clean):
     print(top_10_waterbodies)
     print('\n')
     print(bottom_10_waterbodies)
-    return bottom_10_waterbodies, top_10_waterbodies, waterbody_efforts
+    return
 
 
 @app.cell(hide_code=True)
@@ -759,74 +754,11 @@ def _(df_clean):
 
     # using tabulate to show clean output
     print(tabulate(top_10_waterbodies_top10, headers='keys', tablefmt='fancy_grid', showindex=False, maxcolwidths=[30, None, 70]))
-    return (
-        top_10_waterbodies_report,
-        top_10_waterbodies_top10,
-        top_species_summary_top10,
-        waterbody_efforts_report,
-    )
+    return
 
 
 @app.cell
-def _(
-    bottom_10_consistent,
-    bottom_10_counties,
-    bottom_10_waterbodies,
-    county_stocked,
-    df_clean,
-    df_raw,
-    focus_species,
-    missing_summary,
-    monthly_stocked,
-    pd,
-    species_stats,
-    top_10_consistent,
-    top_10_counties,
-    top_10_waterbodies,
-    top_10_waterbodies_report,
-    top_10_waterbodies_top10,
-    top_decreasing,
-    top_increasing,
-    top_species_summary_top10,
-    trend_df,
-    waterbody_efforts,
-    waterbody_efforts_report,
-    yearly_species,
-    yearly_totals,
-):
-    # dictionary of datasets with sheet names
-    datasets = {
-        "RawData": df_raw,
-        "MissingSummary": missing_summary,
-        "CleanedData": df_clean,
-        "YearlySpecies": yearly_species,
-        "SpeciesStats": species_stats,
-        "Top10Consistent": top_10_consistent,
-        "Bottom10Consistent": bottom_10_consistent,
-        "YearlyTotals": yearly_totals,
-        "TrendData": trend_df,
-        "TopIncreasing": top_increasing,
-        "TopDecreasing": top_decreasing,
-        "FocusSpecies": focus_species,
-        "CountyStocked": county_stocked,
-        "Top10Counties": top_10_counties,
-        "Bottom10Counties": bottom_10_counties,
-        "MonthlyStocked": monthly_stocked,
-        "WaterbodyEfforts": waterbody_efforts,
-        "Top10Waterbodies": top_10_waterbodies,
-        "Bottom10Waterbodies": bottom_10_waterbodies,
-        "WaterbodyEffortsReport": waterbody_efforts_report,
-        "Top10WaterbodiesReport": top_10_waterbodies_report,
-        "Top10WaterbodiesTop10": top_10_waterbodies_top10,
-        "TopSpeciesSummaryTop10": pd.DataFrame({"Top3Species": top_species_summary_top10})
-    }
-
-    # save all datasets to a single Excel file with multiple sheets
-    with pd.ExcelWriter("Michigan_Fish_Stocking_Data.xlsx", engine="xlsxwriter") as writer:
-        for sheet_name, df in datasets.items():
-            # Save each dataframe to its own sheet
-            df.to_excel(writer, sheet_name=sheet_name, index=False)
-    print("!!-- SAVED 'Michigan_Fish_Stocking_Data.xlsx' IN CURRENT WORKING DIRECTORY--!!")
+def _():
     return
 
 
