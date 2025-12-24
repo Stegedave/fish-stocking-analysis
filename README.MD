@@ -45,13 +45,19 @@ This project analyzes historical fish stocking data from the Michigan Department
 
 ---
 
-## Insights Coming Soon
-
-Once analysis is complete, I’ll summarize key findings such as:
-- Overall stocking trends
-- Recommendations for anglers
-- Top fishing destinations based on stocking data
-
+## Sample Insights 
+- Top 10 Fish Species Stocked:
+![Top 10 Fish Species Stocked]("D:\Coding\Projects\fish_stocking_mi\Screenshots\top10.png")
+- Bottom 10 Fish Species Stocked:
+![Bottom 10 Fish Species Stocked]("D:\Coding\Projects\fish_stocking_mi\Screenshots\Bottom10.png")
+- Total Fish Stocked Per Year:
+![Fish Stocked Per Year]("D:\Coding\Projects\fish_stocking_mi\Screenshots\fish_Stocked_perYear.png")
+- Salmon, Steelhead, and Trout Trend:
+![Salmon, Steelhead, and Trout Trend]("D:\Coding\Projects\fish_stocking_mi\Screenshots\sts_trend.png")
+- Total Yearly Averages of Stocked Fish:
+![Total Yearly Averages]("D:\Coding\Projects\fish_stocking_mi\Screenshots\total_yearly_averages.png")
+- Total of Fish Stocked per Month
+![Total of Fish Stocked per Month]("D:\Coding\Projects\fish_stocking_mi\Screenshots\stocking_per_month.png")
 ---
 
 ## License
