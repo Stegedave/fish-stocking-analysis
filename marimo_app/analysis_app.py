@@ -578,7 +578,7 @@ def _(df_clean, pd, plt):
 
     # show plot
     fig6
-    return
+    return (monthly_stocked,)
 
 
 @app.cell(hide_code=True)
@@ -682,7 +682,7 @@ def _(df_clean):
     print(top_10_waterbodies)
     print('\n')
     print(bottom_10_waterbodies)
-    return
+    return bottom_10_waterbodies, top_10_waterbodies
 
 
 @app.cell(hide_code=True)
@@ -758,7 +758,32 @@ def _(df_clean):
 
 
 @app.cell
-def _():
+def _(
+    bottom_10_consistent,
+    bottom_10_counties,
+    bottom_10_waterbodies,
+    df_clean,
+    focus_species,
+    monthly_stocked,
+    top_10_consistent,
+    top_10_counties,
+    top_10_waterbodies,
+    trend_df,
+    yearly_species,
+):
+    # exporting datasets for powerbi
+
+    df_clean.to_csv("./exports/df_clean.csv", index=False)
+    yearly_species.to_csv("./exports/yearly_species.csv", index=False)
+    top_10_consistent.to_csv("./exports/top_10_consistent.csv", index=False) 
+    bottom_10_consistent.to_csv("./exports/bottom_10_consistent.csv", index=False)
+    trend_df.to_csv("./exports/species_trends.csv", index=False)
+    focus_species.to_csv("./exports/sts_species_trends.csv", index=False)
+    monthly_stocked.to_csv("./exports/monthly_stocked.csv", index=False)
+    top_10_counties.to_csv("./exports/top_10_counties.csv", index=False)
+    bottom_10_counties.to_csv("./exports/bottom_10_counties.csv", index=False)
+    top_10_waterbodies.to_csv("./exports/top_10_waterbodies.csv", index=False)
+    bottom_10_waterbodies.to_csv("./exports/bottom_10_waterbodies.csv", index=False)
     return
 
 
