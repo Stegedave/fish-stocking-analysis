@@ -60,6 +60,15 @@ This project analyzes historical fish stocking data from the Michigan Department
 ![Total of Fish Stocked per Month](Screenshots/stocking_per_month.png)
 ---
 
+## Dependencies
+- python 3.13.3
+- marimo>=0.16.5
+- matplotlib==3.10.7
+- numpy>=2.3.3
+- pandas==2.3.3
+- scipy==1.16.3
+- tabulate==0.9.0
+
 ## License
 
 This project is for educational and research purposes only. Data © Michigan Department of Natural Resources.
