@@ -49,15 +49,15 @@ This project analyzes historical fish stocking data from the Michigan Department
 - Top 10 Fish Species Stocked:
 ![Top 10 Fish Species Stocked](Screenshots/top10.png)
 - Bottom 10 Fish Species Stocked:
-![Bottom 10 Fish Species Stocked](Screenshots\Bottom10.png)
+![Bottom 10 Fish Species Stocked](Screenshots/Bottom10.png)
 - Total Fish Stocked Per Year:
-![Fish Stocked Per Year](Screenshots\fish_Stocked_perYear.png)
+![Fish Stocked Per Year](Screenshots/fish_Stocked_perYear.png)
 - Salmon, Steelhead, and Trout Trend:
-![Salmon, Steelhead, and Trout Trend](Screenshots\sts_trend.png)
+![Salmon, Steelhead, and Trout Trend](Screenshots/sts_trend.png)
 - Total Yearly Averages of Stocked Fish:
-![Total Yearly Averages](Screenshots\total_yearly_averages.png)
+![Total Yearly Averages](Screenshots/total_yearly_averages.png)
 - Total of Fish Stocked per Month
-![Total of Fish Stocked per Month](Screenshots\stocking_per_month.png)
+![Total of Fish Stocked per Month](Screenshots/stocking_per_month.png)
 ---
 
 ## License
